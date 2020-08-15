@@ -32,7 +32,7 @@ ApplicationWindow {
 
     property int uAudioIndex: 0
     property int statePlaying: 0
-    property string url: 'https://dashboard.twitch.tv/u/ricardo__martin/stream-manager'
+    property string url: 'https://dashboard.twitch.tv/popout/u/ricardo__martin/stream-manager/activity-feed'//'https://dashboard.twitch.tv/u/ricardo__martin/stream-manager'
 
     property string colorBarra:'white'
 
@@ -222,7 +222,15 @@ ApplicationWindow {
                                 //console.log('R7: '+m3[0])
                                 let accion=m3[0]
 
-                                let msg='Atención: '+user+' te '+accion
+                                let msgF=''
+                                if(accion.indexOf('sigue')>=0){
+                                     msgF=' te ha comenzado a seguir.'
+                                }else if(accion.indexOf('raid')>=0){
+                                    msgF=' te ha hechado un raid.'
+                                }else{
+                                    msgF=' ha realizado un evento desconocido por este robot pelotudo.'
+                                }
+                                let msg='Atención: '+user+msgF
                                 console.log(msg)
                                 if(app.uMsg!==msg){
                                     app.uMsg=msg
