@@ -16,10 +16,9 @@ ApplicationWindow {
     visible: true
     width: 1280
     height: 500
-    //x:0
-    //y:0
+    //flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowTransparentForInput
     visibility:"Maximized"
-    title: 'Unik Twitch Alerts'
+    title: 'Twitch Alerts'
     color: '#333'
     property string moduleName: 'wwas'
     property int fs: app.width*0.02
@@ -225,15 +224,18 @@ ApplicationWindow {
                                 let msgF=''
                                 if(accion.indexOf('sigue')>=0){
                                      msgF=' te ha comenzado a seguir.'
+                                    runAlert(user, 'follow')
                                 }else if(accion.indexOf('raid')>=0){
-                                    msgF=' te ha hechado un raid.'
+                                    msgF=' te ha lanzado un raid.'
+                                    runAlert(user, 'raid')
                                 }else{
-                                    msgF=' ha realizado un evento desconocido por este robot pelotudo.'
+                                    msgF=' ha realizado un evento que no ha sido programado.'
+                                    unik.setFile('event.log', user+' '+accion)
                                 }
                                 let msg='Atención: '+user+msgF
                                 console.log(msg)
                                 if(app.uMsg!==msg){
-                                    app.uMsg=msg
+                                    app.uMsg=msgr
                                     unik.speak(msg)
                                 }
                             }
@@ -248,6 +250,8 @@ ApplicationWindow {
             });
         }
     }
+
+    //XGif{}
     //    Text {
     //        id: info
     //        font.pixelSize: 30
@@ -262,6 +266,11 @@ ApplicationWindow {
     }
     Component.onCompleted:  {
         //unik.debugLog = true
+        if(!unik.folderExist(pws+'/twitch-desktop-alert')){
+            unik.mkdir(pws+'/twitch-desktop-alert')
+        }
+        unik.downloadGit('https://github.com/nextsigner/twitch-desktop-alert.git', pws)
+        runAlert('test', 'follow')
         if(Qt.platform.os==='linux'){
             let m0=(''+ttsLocales).split(',')
             let index=0
@@ -276,6 +285,11 @@ ApplicationWindow {
             //unik.speak('Idioma Español seleccionado.')
         }
     }
+
+    function runAlert(nickName, event){
+        unik.ejecutarLineaDeComandoAparte('unik -folder='+pws+'/twitch-desktop-alert nickName='+nickName+' event='+event)
+    }
+
     function onDLR(download) {
         appSettings.dlvVisible=true
         modDlv.append(download);
